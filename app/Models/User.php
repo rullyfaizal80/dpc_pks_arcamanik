@@ -7,6 +7,8 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Spatie\Permission\Traits\HasRoles;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class User extends Authenticatable
 {
@@ -46,4 +48,16 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
+
+    // Relasi untuk Pembina
+public function upaAsPembina(): HasMany // <--- HANYA GUNAKAN HasMany (karena sudah di-import)
+{
+    return $this->hasMany(Upa::class, 'pembina_id');
+}
+
+// Relasi untuk Anggota
+public function upa(): BelongsTo // <--- HANYA GUNAKAN BelongsTo
+{
+    return $this->belongsTo(Upa::class);
+}
 }
