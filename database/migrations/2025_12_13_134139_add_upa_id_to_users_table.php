@@ -1,3 +1,4 @@
+// File: database/migrations/*_add_upa_id_to_users_table.php
 <?php
 
 use Illuminate\Database\Migrations\Migration;
@@ -6,33 +7,18 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
     public function up(): void
     {
         Schema::table('users', function (Blueprint $table) {
-            // Foreign Key ke tabel 'upas'. Bisa NULL jika user adalah Ketua DPC/Admin
+            // Kolom 'upa_id' (Foreign Key)
             $table->foreignId('upa_id')->nullable()->constrained()->after('password');
-            
-            // Kolom Role/Peran (opsional jika menggunakan Spatie Permission)
-            // Jika tidak menggunakan Spatie, kolom ini wajib ada:
+
+            // Kolom 'role' (PENTING!)
             $table->string('role')->default('anggota')->after('upa_id'); 
-            
-            // Kolom identitas tambahan
+
+            // Kolom 'no_hp'
             $table->string('no_hp')->nullable();
         });
     }
-
-    /**
-     * Reverse the migrations.
-     */
-    public function down(): void
-    {
-        Schema::table('users', function (Blueprint $table) {
-            // Hapus foreign key dan kolom ketika rollback
-            $table->dropForeign(['upa_id']);
-            $table->dropColumn(['upa_id', 'role', 'no_hp']);
-        });
-    }
+    // ... (metode down)
 };
