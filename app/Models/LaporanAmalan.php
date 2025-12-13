@@ -12,12 +12,27 @@ class LaporanAmalan extends Model
     use HasFactory;
 
     protected $fillable = [
-        'user_id', 'tanggal_upa', 'periode_awal', 'periode_akhir', 'jenjang',
-        'amal_1_sholat_berjamaah', 'amal_2_sholat_malam', 'amal_3_baca_quran',
-        'amal_4_shaum_sunnah', 'amal_5_almatsurat', 'amal_6_sholat_dhuha',
-        'amal_7_olahraga', 'amal_8_istighfar', 'amal_9_shalawat',
-        'status',
-    ];
+    'user_id', 
+    'upa_id', 
+    'tanggal_upa', 
+    'periode_awal', 
+    'periode_akhir', 
+    'jenjang', 
+
+    'amal_1_sholat_berjamaah', // <--- HARUS SAMA DENGAN MIGRASI
+    'amal_2_sholat_malam',
+    'amal_3_baca_quran',
+    'amal_4_shaum_sunnah',
+    'amal_5_almatsurat',
+    'amal_6_sholat_dhuha',
+    'amal_7_olahraga',
+    'amal_8_istighfar',
+    'amal_9_shalawat',
+
+    'status',
+    'tanggal_verifikasi',
+    'verifikasi_oleh',
+];
 
     // Relasi: Laporan Amalan dimiliki oleh satu User (Anggota)
     public function user(): BelongsTo

@@ -20,5 +20,14 @@ return new class extends Migration
             $table->string('no_hp')->nullable();
         });
     }
-    // ... (metode down)
+    
+public function down(): void
+{
+    Schema::table('users', function (Blueprint $table) {
+        // 1. Hapus Foreign Key DULU
+        $table->dropForeign(['upa_id']); // Ganti dengan nama Foreign Key jika berbeda
+        // 2. Hapus Kolom upa_id
+        $table->dropColumn('upa_id');
+    });
+}
 };

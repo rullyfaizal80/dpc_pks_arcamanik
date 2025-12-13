@@ -26,33 +26,52 @@ class LaporanAmalanController extends Controller
     /**
      * Menyimpan laporan amalan yang baru dibuat ke database.
      */
-    public function store(Request $request)
-    {
-        // 1. Validasi Data
-        $validatedData = $request->validate([
-            'tanggal' => 'required|date',
-            'sholat_subuh_berjamaah' => 'required|boolean',
-            'tilawah' => 'required|integer|min:0',
-            // Tambahkan validasi untuk semua field amalan Anda di sini
-        ]);
-        
-        // 2. Simpan ke Database
-        $laporan = LaporanAmalan::create([
-            'user_id' => Auth::id(), // ID Anggota yang sedang login
-            'upa_id' => Auth::user()->upa_id, // Ambil UPA ID dari user yang login
-            'tanggal' => $validatedData['tanggal'],
-            'sholat_subuh_berjamaah' => $validatedData['sholat_subuh_berjamaah'],
-            'tilawah' => $validatedData['tilawah'],
-            'status' => 'PENDING', // Status awal laporan
-        ]);
+   public function store(Request $request)
+{
+    // 1. Validasi Data: Sesuaikan nama field di sini
+    $validatedData = $request->validate([
+        'tanggal_upa' => 'required|date',
+        'periode_awal' => 'required|date',
+        'periode_akhir' => 'required|date|after_or_equal:periode_awal',
+        'jenjang' => 'required|string|max:20', 
 
-        // 3. Redirect ke Halaman Berikutnya (Misal: Riwayat Laporan atau Dashboard)
-        // Kita akan redirect ke dashboard dulu, lalu nanti kita buat halaman riwayatnya
-        return redirect()->route('dashboard')->with('success', 'Laporan amalan berhasil dikirim dan menunggu verifikasi.');
-        
-        // Catatan: Jika Anda ingin redirect ke riwayat (yang belum dibuat), gunakan:
-        // return redirect()->route('laporan-amalan.riwayat')->with('success', 'Laporan amalan berhasil dikirim.');
-    }
+        'amal_1_sholat_berjamaah' => 'required|integer|min:0|max:35', 
+        'amal_2_sholat_malam' => 'required|integer|min:0|max:7',
+        'amal_3_baca_quran' => 'required|numeric|min:0', // Menggunakan numeric karena tipe decimal
+        'amal_4_shaum_sunnah' => 'required|integer|min:0|max:7', 
+        'amal_5_almatsurat' => 'required|integer|min:0|max:14', 
+        'amal_6_sholat_dhuha' => 'required|integer|min:0|max:7',
+        'amal_7_olahraga' => 'required|integer|min:0|max:7',
+        'amal_8_istighfar' => 'required|integer|min:0|max:7',
+        'amal_9_shalawat' => 'required|integer|min:0|max:7',
+    ]);
 
-    // ... Anda bisa menambahkan metode 'riwayat' di sini nanti
+    // 2. Simpan ke Database: Sesuaikan nama field di sini
+    LaporanAmalan::create([
+        'user_id' => Auth::id(), 
+        'upa_id' => Auth::user()->upa_id, // Wajib ada di model User
+
+        // Data dari Form (menggunakan nama kolom Migrasi)
+        'tanggal_upa' => $validatedData['tanggal_upa'],
+        'periode_awal' => $validatedData['periode_awal'],
+        'periode_akhir' => $validatedData['periode_akhir'],
+        'jenjang' => $validatedData['jenjang'],
+
+        'amal_1_sholat_berjamaah' => $validatedData['amal_1_sholat_berjamaah'],
+        'amal_2_sholat_malam' => $validatedData['amal_2_sholat_malam'],
+        'amal_3_baca_quran' => $validatedData['amal_3_baca_quran'],
+        'amal_4_shaum_sunnah' => $validatedData['amal_4_shaum_sunnah'],
+        'amal_5_almatsurat' => $validatedData['amal_5_almatsurat'],
+        'amal_6_sholat_dhuha' => $validatedData['amal_6_sholat_dhuha'],
+        'amal_7_olahraga' => $validatedData['amal_7_olahraga'],
+        'amal_8_istighfar' => $validatedData['amal_8_istighfar'],
+        'amal_9_shalawat' => $validatedData['amal_9_shalawat'],
+
+        'status' => 'PENDING', 
+    ]);
+
+    return redirect()->route('dashboard')->with('success', 'Laporan amalan berhasil dikirim dan menunggu verifikasi.');
+}
+
+        // ... Anda bisa menambahkan metode 'riwayat' di sini nanti
 }
