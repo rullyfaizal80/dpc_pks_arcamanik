@@ -16,7 +16,7 @@ class DashboardController extends Controller
         $user = auth()->user();
 
         if ($user->hasRole('Anggota')) {
-            return redirect()->route('laporan.create'); // Arahkan Anggota langsung ke Form Laporan
+            return redirect()->route('laporan-amalan.create'); // Arahkan Anggota langsung ke Form Laporan
         }
 
         // Jika Pembina, Sek DPC, atau Ketua DPC, tampilkan dashboard monitoring
