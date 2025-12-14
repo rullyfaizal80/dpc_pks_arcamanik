@@ -31,16 +31,22 @@
                             <x-input-error :messages="$errors->get('tanggal_upa')" class="mt-2" />
                         </div>
                         
-                        {{-- 2. Jenjang Keanggotaan (jenjang) --}}
-                        <div class="mt-4">
-                            <x-input-label for="jenjang" :value="__('Jenjang Keanggotaan *')" />
-                            <select id="jenjang" name="jenjang" class="border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm block mt-1 w-full" required>
-                                <option value="">Pilih Jenjang</option>
-                                <option value="Muda" {{ old('jenjang') == 'Muda' ? 'selected' : '' }}>Muda</option>
-                                <option value="Pratama" {{ old('jenjang') == 'Pratama' ? 'selected' : '' }}>Pratama</option>
-                            </select>
-                            <x-input-error :messages="$errors->get('jenjang')" class="mt-2" />
-                        </div>
+                       {{-- 2. Jenjang Keanggotaan (jenjang) - DIUBAH MENJADI RADIO BUTTON VERTIKAL --}}
+<div class="mt-4">
+    <x-input-label for="jenjang" :value="__('Jenjang Keanggotaan *')" />
+    {{-- MENGHAPUS 'flex space-x-4' DAN MENGGANTI DENGAN 'space-y-2' --}}
+    <div class="mt-2 space-y-2"> 
+        <label class="flex items-center">
+            <input type="radio" class="rounded border-gray-300 text-indigo-600 shadow-sm focus:ring-indigo-500" name="jenjang" value="Muda" required {{ old('jenjang') == 'Muda' ? 'checked' : '' }}>
+            <span class="ms-2 text-sm text-gray-600">Muda</span>
+        </label>
+        <label class="flex items-center">
+            <input type="radio" class="rounded border-gray-300 text-indigo-600 shadow-sm focus:ring-indigo-500" name="jenjang" value="Pratama" required {{ old('jenjang') == 'Pratama' ? 'checked' : '' }}>
+            <span class="ms-2 text-sm text-gray-600">Pratama</span>
+        </label>
+    </div>
+    <x-input-error :messages="$errors->get('jenjang')" class="mt-2" />
+</div>
 
                         {{-- 3. Periode Laporan (Otomatis terisi dan di-hidden) --}}
                         <div class="mt-4 col-span-1">                           
@@ -51,7 +57,14 @@
                             <x-input-error :messages="$errors->get('periode_awal') || $errors->get('periode_akhir')" class="mt-2" />
                         </div>
                     </div>
-                                      
+                        
+<hr class="my-8">
+<br>
+
+                    <ol class="list-decimal pl-5 text-sm text-gray-700 space-y-1">
+    <li class="font-semibold">AMALAN HARIAN</li>
+    <li>Diisi selama sepekan Senin-Ahad</li>
+</ol>
 
                     {{-- 1. Sholat Berjamaah di Mesjid (amal_1_sholat_berjamaah) - Input Number --}}
                     <div class="mt-4 p-4 border rounded-md">
@@ -92,12 +105,13 @@
                         <x-input-error :messages="$errors->get('amal_3_baca_quran')" class="mt-2" />
                     </div>
 
-                    {{-- 4. Shaum Sunnah Pekan ini (amal_4_shaum_sunnah) - Radio Button (Vertical Layout) --}}
+                   {{-- 4. Shaum Sunnah Pekan ini (amal_4_shaum_sunnah) - Radio Button (Vertical Layout) --}}
                     <div class="mt-4 p-4 border rounded-md">
                         <x-input-label :value="__('4. Shaum Sunnah Pekan ini *')" />
-                        <div class="mt-2 space-y-2"> {{-- Menggunakan space-y-2 untuk vertikal --}}
+                        {{-- Memastikan setiap label mendapat kelas 'block' agar turun ke bawah --}}
+                        <div class="mt-2 space-y-2"> 
                             @for ($i = 0; $i <= 3; $i++)
-                                <label class="inline-flex items-center block">
+                                <label class="flex items-center">
                                     <input type="radio" class="rounded border-gray-300 text-indigo-600 shadow-sm focus:ring-indigo-500" name="amal_4_shaum_sunnah" value="{{ $i }}" required {{ old('amal_4_shaum_sunnah') == $i ? 'checked' : '' }}>
                                     <span class="ms-2 text-sm text-gray-600">{{ $i }} kali</span>
                                 </label>
