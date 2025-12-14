@@ -1,4 +1,4 @@
-{{-- resources/views/laporan/create.blade.php (VERSI FINAL PERBAIKAN TAMPILAN) --}}
+{{-- resources/views/laporan/create.blade.php (VERSI FINAL PERBAIKAN TAMPILAN DAN LOGIKA) --}}
 <x-app-layout>
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 leading-tight">
@@ -8,25 +8,30 @@
 
     <div class="py-12">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg p-6">
+            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg p-6">               
                 
-                <h3 class="text-lg font-medium text-gray-900 mb-4">Input Data Laporan Amalan Sepekan (Senin-Ahad)</h3>
+<ol class="list-decimal pl-5 text-sm text-gray-700 space-y-1">
+    <li>1. Amalan Harian ini di Laporkan sepekan sekali periode Senin–Ahad</li>
+    <li>2. Pengisian Laporan dilakukan oleh masing-masing anggota UPA</li>
+    <li>3. Pengisian bisa dilakukan bersama-sama saat UPA berlangsung</li>
+</ol>
+<br>
+<hr class="my-8">
                 
-                {{-- Form action sudah benar: route('laporan-amalan.store') --}}
                 <form method="POST" action="{{ route('laporan-amalan.store') }}">
                     @csrf
                     
                     {{-- DATA IDENTITAS & PERIODE --}}
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                         
-                        {{-- Tanggal UPA (tanggal_upa) --}}
+                        {{-- 1. Tanggal UPA (tanggal_upa) --}}
                         <div class="mt-4">
                             <x-input-label for="tanggal_upa" :value="__('Tanggal Pelaksanaan UPA *')" />
                             <x-text-input id="tanggal_upa" class="block mt-1 w-full" type="date" name="tanggal_upa" required value="{{ old('tanggal_upa') }}" />
                             <x-input-error :messages="$errors->get('tanggal_upa')" class="mt-2" />
                         </div>
                         
-                        {{-- Jenjang Keanggotaan (jenjang) --}}
+                        {{-- 2. Jenjang Keanggotaan (jenjang) --}}
                         <div class="mt-4">
                             <x-input-label for="jenjang" :value="__('Jenjang Keanggotaan *')" />
                             <select id="jenjang" name="jenjang" class="border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm block mt-1 w-full" required>
@@ -37,19 +42,16 @@
                             <x-input-error :messages="$errors->get('jenjang')" class="mt-2" />
                         </div>
 
-                        {{-- Periode Awal & Akhir --}}
-                        <div class="mt-4 col-span-1">
-                            <x-input-label :value="__('Periode Laporan (Senin-Ahad)')" />
-                            <div class="flex space-x-2">
-                                <x-text-input id="periode_awal" type="date" name="periode_awal" required value="{{ old('periode_awal') }}" placeholder="Senin" />
-                                <x-text-input id="periode_akhir" type="date" name="periode_akhir" required value="{{ old('periode_akhir') }}" placeholder="Ahad" />
-                            </div>
+                        {{-- 3. Periode Laporan (Otomatis terisi dan di-hidden) --}}
+                        <div class="mt-4 col-span-1">                           
+                           
+                            {{-- Input di-hidden, hanya nilai yang akan dikirim --}}
+                            <input type="hidden" id="periode_awal" name="periode_awal" required value="{{ old('periode_awal') }}">
+                            <input type="hidden" id="periode_akhir" name="periode_akhir" required value="{{ old('periode_akhir') }}">
                             <x-input-error :messages="$errors->get('periode_awal') || $errors->get('periode_akhir')" class="mt-2" />
                         </div>
                     </div>
-
-                    <hr class="my-8">
-                    <h4 class="text-md font-semibold text-gray-700 mb-4">9 Poin Amalan Harian</h4>
+                                      
 
                     {{-- 1. Sholat Berjamaah di Mesjid (amal_1_sholat_berjamaah) - Input Number --}}
                     <div class="mt-4 p-4 border rounded-md">
@@ -58,7 +60,7 @@
                         <x-input-error :messages="$errors->get('amal_1_sholat_berjamaah')" class="mt-2" />
                     </div>
 
-                    {{-- 2. Sholat Malam Pekan ini (amal_2_sholat_malam) - Radio Button --}}
+                    {{-- 2. Sholat Malam Pekan ini (amal_2_sholat_malam) - Radio Button (Horizontal) --}}
                     <div class="mt-4 p-4 border rounded-md">
                         <x-input-label :value="__('2. Sholat Malam Pekan ini * (0-7x)')" />
                         <div class="mt-2 grid grid-cols-8 gap-2">
@@ -72,10 +74,10 @@
                         <x-input-error :messages="$errors->get('amal_2_sholat_malam')" class="mt-2" />
                     </div>
 
-                    {{-- 3. Membaca AL-Quran (amal_3_baca_quran) - Radio Button --}}
+                    {{-- 3. Membaca AL-Quran (amal_3_baca_quran) - Radio Button (Grid 2 Kolom) --}}
                     <div class="mt-4 p-4 border rounded-md">
                         <x-input-label :value="__('3. Membaca AL-Quran (Juz) pekan ini *')" />
-                        <div class="mt-2 flex flex-wrap gap-4">
+                        <div class="mt-2 grid grid-cols-2 gap-2"> 
                             <label class="inline-flex items-center">
                                 <input type="radio" class="rounded border-gray-300 text-indigo-600 shadow-sm focus:ring-indigo-500" name="amal_3_baca_quran" value="0.5" required {{ old('amal_3_baca_quran') == '0.5' ? 'checked' : '' }}>
                                 <span class="ms-2 text-sm text-gray-600">kurang dari 1 juz</span>
@@ -90,14 +92,14 @@
                         <x-input-error :messages="$errors->get('amal_3_baca_quran')" class="mt-2" />
                     </div>
 
-                    {{-- 4. Shaum Sunnah Pekan ini (amal_4_shaum_sunnah) - Radio Button --}}
+                    {{-- 4. Shaum Sunnah Pekan ini (amal_4_shaum_sunnah) - Radio Button (Vertical Layout) --}}
                     <div class="mt-4 p-4 border rounded-md">
                         <x-input-label :value="__('4. Shaum Sunnah Pekan ini *')" />
-                        <div class="mt-2 flex flex-wrap space-x-4">
+                        <div class="mt-2 space-y-2"> {{-- Menggunakan space-y-2 untuk vertikal --}}
                             @for ($i = 0; $i <= 3; $i++)
-                                <label class="inline-flex items-center">
+                                <label class="inline-flex items-center block">
                                     <input type="radio" class="rounded border-gray-300 text-indigo-600 shadow-sm focus:ring-indigo-500" name="amal_4_shaum_sunnah" value="{{ $i }}" required {{ old('amal_4_shaum_sunnah') == $i ? 'checked' : '' }}>
-                                    <span class="ms-2 text-sm text-gray-600">{{ $i }}</span>
+                                    <span class="ms-2 text-sm text-gray-600">{{ $i }} kali</span>
                                 </label>
                             @endfor
                         </div>
@@ -111,7 +113,7 @@
                         <x-input-error :messages="$errors->get('amal_5_almatsurat')" class="mt-2" />
                     </div>
 
-                    {{-- 6. Sholat Dhuha Pekan ini (amal_6_sholat_dhuha) - Radio Button --}}
+                    {{-- 6. Sholat Dhuha Pekan ini (amal_6_sholat_dhuha) - Radio Button (Horizontal) --}}
                     <div class="mt-4 p-4 border rounded-md">
                         <x-input-label :value="__('6. Sholat Dhuha Pekan ini * (0-7x)')" />
                         <div class="mt-2 grid grid-cols-8 gap-2">
@@ -125,7 +127,7 @@
                         <x-input-error :messages="$errors->get('amal_6_sholat_dhuha')" class="mt-2" />
                     </div>
 
-                    {{-- 7. Olahraga Pekan ini (amal_7_olahraga) - Radio Button --}}
+                    {{-- 7. Olahraga Pekan ini (amal_7_olahraga) - Radio Button (Horizontal) --}}
                     <div class="mt-4 p-4 border rounded-md">
                         <x-input-label :value="__('7. Olahraga Pekan ini * (standar 7x per pekan)')" />
                         <div class="mt-2 grid grid-cols-8 gap-2">
@@ -139,7 +141,7 @@
                         <x-input-error :messages="$errors->get('amal_7_olahraga')" class="mt-2" />
                     </div>
 
-                    {{-- 8. Membaca Istighfar Pekan ini (amal_8_istighfar) - Radio Button --}}
+                    {{-- 8. Membaca Istighfar Pekan ini (amal_8_istighfar) - Radio Button (Horizontal) --}}
                     <div class="mt-4 p-4 border rounded-md">
                         <x-input-label :value="__('8. Membaca Istighfar Pekan ini * (standar 7x per pekan)')" />
                         <div class="mt-2 grid grid-cols-8 gap-2">
@@ -153,7 +155,7 @@
                         <x-input-error :messages="$errors->get('amal_8_istighfar')" class="mt-2" />
                     </div>
 
-                    {{-- 9. Membaca Shalawat Pekan ini (amal_9_shalawat) - Radio Button --}}
+                    {{-- 9. Membaca Shalawat Pekan ini (amal_9_shalawat) - Radio Button (Horizontal) --}}
                     <div class="mt-4 p-4 border rounded-md">
                         <x-input-label :value="__('9. Membaca Shalawat Pekan ini * (standar 7x per pekan)')" />
                         <div class="mt-2 grid grid-cols-8 gap-2">
@@ -179,4 +181,63 @@
             </div>
         </div>
     </div>
+
+    {{-- SCRIPTS JAVASCRIPT UNTUK OTOMATISASI TANGGAL (MEMASTIKAN INPUT HIDDEN TERISI) --}}
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const tanggalUpaInput = document.getElementById('tanggal_upa');
+            const periodeAwalInput = document.getElementById('periode_awal');
+            const periodeAkhirInput = document.getElementById('periode_akhir');
+
+            // Fungsi untuk memformat Date object menjadi string YYYY-MM-DD
+            function formatDate(date) {
+                const yyyy = date.getFullYear();
+                let mm = date.getMonth() + 1; 
+                let dd = date.getDate();
+
+                if (mm < 10) mm = '0' + mm;
+                if (dd < 10) dd = '0' + dd;
+                
+                return `${yyyy}-${mm}-${dd}`;
+            }
+
+            // Fungsi utama untuk menghitung periode Senin-Ahad
+            function calculatePeriod(upaDateStr) {
+                if (!upaDateStr) {
+                    periodeAwalInput.value = '';
+                    periodeAkhirInput.value = '';
+                    return;
+                }
+
+                // Buat objek Date dari input string YYYY-MM-DD
+                const upaDate = new Date(upaDateStr + 'T00:00:00'); 
+                
+                // Dapatkan hari dalam seminggu (0=Minggu, 1=Senin, ..., 6=Sabtu)
+                const dayOfWeek = upaDate.getDay(); 
+
+                // Hitung selisih hari ke hari Senin sebelumnya
+                const daysSinceMonday = (dayOfWeek - 1 + 7) % 7; 
+
+                // Hitung Tanggal Periode Awal (Senin)
+                const periodeAwal = new Date(upaDate);
+                periodeAwal.setDate(upaDate.getDate() - daysSinceMonday);
+                
+                // Hitung Tanggal Periode Akhir (Ahad)
+                const periodeAkhir = new Date(periodeAwal);
+                periodeAkhir.setDate(periodeAwal.getDate() + 6);
+
+                // Format dan set nilai ke input tersembunyi
+                periodeAwalInput.value = formatDate(periodeAwal);
+                periodeAkhirInput.value = formatDate(periodeAkhir);
+            }
+
+            // Panggil fungsi saat input tanggal berubah
+            tanggalUpaInput.addEventListener('change', function() {
+                calculatePeriod(this.value);
+            });
+            
+            // Panggil fungsi saat halaman dimuat (untuk mengisi nilai lama jika ada)
+            calculatePeriod(tanggalUpaInput.value);
+        });
+    </script>
 </x-app-layout>
